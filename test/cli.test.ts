@@ -40,10 +40,11 @@ test("parseArgs: file path and format together", () => {
 // --- integration (spawn the CLI via Bun) ---
 
 const CLI = new URL("../src/cli.ts", import.meta.url).pathname;
+const ROOT = new URL("..", import.meta.url).pathname;
 
 test("integration: file argument prints TOC", () => {
 	const result = spawnSync(["bun", CLI, "README.md"], {
-		cwd: "/var/home/toor/Projects/md-toc-ln-v2",
+		cwd: ROOT,
 	});
 	expect(result.exitCode).toBe(0);
 	// README has headings — just verify the output is non-empty and contains a heading marker
