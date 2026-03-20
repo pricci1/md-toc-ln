@@ -11,6 +11,9 @@
 		"type": "git",
 		"url": "git+https://github.com/pricci1/md-toc-ln.git"
 	},
+	"bin": {
+		"md-toc-ln": "./dist/cli.js"
+	},
 	"files": [
 		"dist"
 	],
