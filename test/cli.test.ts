@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
 import { spawnSync } from "bun";
+import { fileURLToPath } from "node:url";
 import { Readable } from "node:stream";
 import { parseArgs, readStdin } from "../src/cli";
 
@@ -39,11 +40,13 @@ test("parseArgs: file path and format together", () => {
 
 // --- integration (spawn the CLI via Bun) ---
 
-const CLI = new URL("../src/cli.ts", import.meta.url).pathname;
-const ROOT = new URL("..", import.meta.url).pathname;
+// Use fileURLToPath for Windows-safe paths (pathname gives /C:/... on Windows)
+// Use process.execPath instead of "bun" so the subprocess resolves the current binary on all platforms
+const CLI = fileURLToPath(new URL("../src/cli.ts", import.meta.url));
+const ROOT = fileURLToPath(new URL("..", import.meta.url));
 
 test("integration: file argument prints TOC", () => {
-	const result = spawnSync(["bun", CLI, "README.md"], {
+	const result = spawnSync([process.execPath, CLI, "README.md"], {
 		cwd: ROOT,
 	});
 	expect(result.exitCode).toBe(0);
@@ -52,7 +55,7 @@ test("integration: file argument prints TOC", () => {
 });
 
 test("integration: stdin pipe prints TOC", () => {
-	const result = spawnSync(["bun", CLI], {
+	const result = spawnSync([process.execPath, CLI], {
 		stdin: new TextEncoder().encode("# Hello\n## World"),
 	});
 	expect(result.exitCode).toBe(0);
@@ -60,7 +63,7 @@ test("integration: stdin pipe prints TOC", () => {
 });
 
 test("integration: --format flag is applied", () => {
-	const result = spawnSync(["bun", CLI, "--format", "{title} ({line})"], {
+	const result = spawnSync([process.execPath, CLI, "--format", "{title} ({line})"], {
 		stdin: new TextEncoder().encode("# My Heading"),
 	});
 	expect(result.exitCode).toBe(0);
@@ -68,7 +71,7 @@ test("integration: --format flag is applied", () => {
 });
 
 test("integration: --help prints usage", () => {
-	const result = spawnSync(["bun", CLI, "--help"]);
+	const result = spawnSync([process.execPath, CLI, "--help"]);
 	expect(result.exitCode).toBe(0);
 	expect(result.stdout.toString()).toContain("md-toc-ln");
 	expect(result.stdout.toString()).toContain("--format");
