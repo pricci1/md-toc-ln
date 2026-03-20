@@ -41,6 +41,37 @@ test("custom format template with all variables", () => {
 	)
 })
 
+test("setext heading level 1 (===) is recognised", () => {
+	const md = `My Title
+========`
+	expect(extractToc(md)).toBe("# My Title :1")
+})
+
+test("setext heading level 2 (---) is recognised", () => {
+	const md = `My Section
+----------`
+	expect(extractToc(md)).toBe("## My Section :1")
+})
+
+test("setext and atx headings can be mixed, line numbers are correct", () => {
+	const md = `Title
+=====
+## Atx Sub
+Setext Two
+----------`
+	expect(extractToc(md)).toBe("# Title :1\n## Atx Sub :3\n## Setext Two :4")
+})
+
+test("setext headings inside fenced code blocks are skipped", () => {
+	const md = `# Real
+\`\`\`
+Fake
+====
+\`\`\`
+# Also Real`
+	expect(extractToc(md)).toBe("# Real :1\n# Also Real :6")
+})
+
 test("no headings returns empty string", () => {
 	expect(extractToc("just some text\nno headings here")).toBe("")
 })
