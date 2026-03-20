@@ -2,12 +2,27 @@ import { readFile } from "node:fs/promises";
 import { extractToc } from "./index";
 
 const DEFAULT_FORMAT = "{hashes} {title} :{line}";
-const HELP_TEXT = `md-toc-ln [file] [--format "<template>"]
-cat file.md | md-toc-ln [--format "<template>"]
+const HELP_TEXT = `md-toc-ln — print a table of contents with line numbers for a markdown file
+
+Usage:
+  md-toc-ln [file] [options]
+  cat file.md | md-toc-ln [options]
+
+Options:
+  --format <template>   Output format for each entry (default: "{hashes} {title} :{line}")
+  -h, --help            Show this help
 
 Template variables:
-  {hashes} {title} {line} {depth} {indent}
-`;
+  {hashes}   Heading marker (#, ##, ###, …)
+  {title}    Heading text
+  {line}     Line number in the source file
+  {depth}    Heading depth (1–6)
+  {indent}   Two spaces per depth level minus one (empty for h1)
+
+Examples:
+  md-toc-ln README.md
+  md-toc-ln README.md --format "{indent}{hashes} {title} :{line}"
+  cat README.md | md-toc-ln --format "{line}: {title}"`;
 
 export function parseArgs(args: string[]): {
 	filePath: string | null;
