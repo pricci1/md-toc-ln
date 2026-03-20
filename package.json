@@ -1,6 +1,6 @@
 {
 	"name": "md-toc-ln",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "CLI that prints a table of contents with line numbers for a given markdown file or stdin.",
 	"homepage": "https://github.com/pricci1/md-toc-ln#readme",
 	"bugs": {
